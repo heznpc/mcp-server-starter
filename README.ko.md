@@ -133,16 +133,61 @@ server.resource("example://data", "Example Resource", async () => ({
 
 ```ts
 import express from 'express';
+import { randomUUID } from 'node:crypto';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 
 const app = express();
+app.use(express.json());
+
+const sessions = new Map<string, StreamableHTTPServerTransport>();
+
 app.post('/mcp', async (req, res) => {
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+  const sessionId = req.headers['mcp-session-id'] as string;
+  const existing = sessions.get(sessionId);
+
+  if (existing) {
+    await existing.handleRequest(req, res);
+    return;
+  }
+
+  if (!isInitializeRequest(req.body)) {
+    res.status(400).json({ error: 'Bad Request: Not an initialize request' });
+    return;
+  }
+
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => randomUUID(),
+  });
+
+  transport.onclose = () => {
+    const id = transport.sessionId;
+    if (id) sessions.delete(id);
+  };
+
+  const server = createServer(); // your McpServer factory
   await server.connect(transport);
+  if (transport.sessionId) sessions.set(transport.sessionId, transport);
   await transport.handleRequest(req, res);
 });
+
+app.get('/mcp', async (req, res) => {
+  const t = sessions.get(req.headers['mcp-session-id'] as string);
+  if (!t) return res.status(400).end();
+  await t.handleRequest(req, res);
+});
+
+app.delete('/mcp', async (req, res) => {
+  const t = sessions.get(req.headers['mcp-session-id'] as string);
+  if (!t) return res.status(400).end();
+  await t.handleRequest(req, res);
+});
+
 app.listen(3000);
 ```
+
+> **왜 이렇게 복잡한가?** `isInitializeRequest` 없이는 모든 POST가 새 transport를 생성 → "Already connected" 에러. GET 없이는 클라이언트가 SSE를 통한 서버 notification을 받을 수 없습니다.
 
 자세한 내용은 [MCP SDK 문서](https://github.com/modelcontextprotocol/typescript-sdk) 참고.
 
@@ -228,7 +273,7 @@ tests/
 | `npm run dev` | tsx로 실행 (빌드 불필요) |
 | `npm run build` | TypeScript 컴파일 |
 | `npm start` | 컴파일된 서버 실행 |
-| `npm test` | 빌드 + 테스트 |
+| `npm test` | 빌드 + 테스트 (`pretest`가 자동 빌드) |
 | `npm run lint` | ESLint |
 | `npm run version:patch` | 패치 버전 올리기 |
 

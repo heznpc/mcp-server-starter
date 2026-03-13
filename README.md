@@ -133,16 +133,61 @@ This starter uses **stdio** (the standard for local MCP servers). If you need HT
 
 ```ts
 import express from 'express';
+import { randomUUID } from 'node:crypto';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 
 const app = express();
+app.use(express.json());
+
+const sessions = new Map<string, StreamableHTTPServerTransport>();
+
 app.post('/mcp', async (req, res) => {
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+  const sessionId = req.headers['mcp-session-id'] as string;
+  const existing = sessions.get(sessionId);
+
+  if (existing) {
+    await existing.handleRequest(req, res);
+    return;
+  }
+
+  if (!isInitializeRequest(req.body)) {
+    res.status(400).json({ error: 'Bad Request: Not an initialize request' });
+    return;
+  }
+
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => randomUUID(),
+  });
+
+  transport.onclose = () => {
+    const id = transport.sessionId;
+    if (id) sessions.delete(id);
+  };
+
+  const server = createServer(); // your McpServer factory
   await server.connect(transport);
+  if (transport.sessionId) sessions.set(transport.sessionId, transport);
   await transport.handleRequest(req, res);
 });
+
+app.get('/mcp', async (req, res) => {
+  const t = sessions.get(req.headers['mcp-session-id'] as string);
+  if (!t) return res.status(400).end();
+  await t.handleRequest(req, res);
+});
+
+app.delete('/mcp', async (req, res) => {
+  const t = sessions.get(req.headers['mcp-session-id'] as string);
+  if (!t) return res.status(400).end();
+  await t.handleRequest(req, res);
+});
+
 app.listen(3000);
 ```
+
+> **Why the complexity?** Without `isInitializeRequest`, every POST creates a new transport → "Already connected" errors. Without GET, clients can't receive server notifications via SSE.
 
 See the [MCP SDK docs](https://github.com/modelcontextprotocol/typescript-sdk) for full details.
 
@@ -228,7 +273,7 @@ tests/
 | `npm run dev` | Run with tsx (no build needed) |
 | `npm run build` | Compile TypeScript |
 | `npm start` | Run compiled server |
-| `npm test` | Build + run tests |
+| `npm test` | Build + run tests (`pretest` auto-builds) |
 | `npm run lint` | ESLint |
 | `npm run version:patch` | Bump patch version |
 

@@ -46,7 +46,8 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       # WARNING: If your package.json has "os": ["darwin"], npm ci will fail with
-      # EBADPLATFORM on this ubuntu runner. Change to `runs-on: macos-latest` if needed.
+      # EBADPLATFORM on this ubuntu runner. Uncomment below and change the job-level
+      # `runs-on: ubuntu-latest` to `runs-on: macos-latest`.
       - name: Install dependencies
         run: npm ci
 

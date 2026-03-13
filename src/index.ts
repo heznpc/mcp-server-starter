@@ -13,6 +13,9 @@ const server = new McpServer({
 
 // Tools — use registerTool for full control (annotations, title)
 server.registerTool(greet.name, greet.config, greet.handler);
+// To pass config to tool handlers in multi-module setups:
+// import { registerNoteTools } from './notes/tools.js';
+// registerNoteTools(server, config);
 
 // Resources — expose data to the client (replace with your own)
 server.resource("example://data", "Example Resource", async () => ({
