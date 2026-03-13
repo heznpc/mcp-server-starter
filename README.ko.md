@@ -1,12 +1,26 @@
+<div align="center">
+
+# MCP Server Starter
+
+**TypeScript + OIDC npm Publishing + CI/CD.**
+
+MCP 서버를 만들고, push로 배포하세요. 시크릿 0개.
+
+[![CI](https://github.com/heznpc/mcp-server-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/heznpc/mcp-server-starter/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/my-mcp-server.svg)](https://www.npmjs.com/package/my-mcp-server)
+
+[English](README.md) | **한국어**
+
+</div>
+
+---
+
 > **[Starter Series](https://github.com/heznpc/starter-series)** — 매번 AI한테 CI/CD 설명하지 마세요. Clone하고 바로 시작하세요.
 >
 > [Docker 배포](https://github.com/heznpc/docker-deploy-starter) · [Discord 봇](https://github.com/heznpc/discord-bot-starter) · [Telegram 봇](https://github.com/heznpc/telegram-bot-starter) · [브라우저 확장](https://github.com/heznpc/browser-extension-starter) · [Electron 앱](https://github.com/heznpc/electron-app-starter) · [npm 패키지](https://github.com/heznpc/npm-package-starter) · [React Native](https://github.com/heznpc/react-native-starter) · [VS Code 확장](https://github.com/heznpc/vscode-extension-starter) · **MCP 서버**
 
-**English** → [README.md](README.md)
-
-# MCP Server Starter
-
-프로덕션 레디 [Model Context Protocol](https://modelcontextprotocol.io) 서버 템플릿. CI/CD, 보안 검사, npm 배포가 내장되어 있습니다.
+---
 
 ## 포함 사항
 

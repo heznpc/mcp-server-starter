@@ -1,12 +1,26 @@
+<div align="center">
+
+# MCP Server Starter
+
+**TypeScript + OIDC npm Publishing + CI/CD.**
+
+Build your MCP server. One-click publish. Zero secrets needed.
+
+[![CI](https://github.com/heznpc/mcp-server-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/heznpc/mcp-server-starter/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![npm version](https://img.shields.io/npm/v/my-mcp-server.svg)](https://www.npmjs.com/package/my-mcp-server)
+
+**English** | [한국어](README.ko.md)
+
+</div>
+
+---
+
 > **Part of [Starter Series](https://github.com/heznpc/starter-series)** — Stop explaining CI/CD to your AI every time. Clone and start.
 >
 > [Docker Deploy](https://github.com/heznpc/docker-deploy-starter) · [Discord Bot](https://github.com/heznpc/discord-bot-starter) · [Telegram Bot](https://github.com/heznpc/telegram-bot-starter) · [Browser Extension](https://github.com/heznpc/browser-extension-starter) · [Electron App](https://github.com/heznpc/electron-app-starter) · [npm Package](https://github.com/heznpc/npm-package-starter) · [React Native](https://github.com/heznpc/react-native-starter) · [VS Code Extension](https://github.com/heznpc/vscode-extension-starter) · **MCP Server**
 
-**한국어** → [README.ko.md](README.ko.md)
-
-# MCP Server Starter
-
-A production-ready [Model Context Protocol](https://modelcontextprotocol.io) server template with CI/CD, security audits, and npm publishing baked in.
+---
 
 ## What You Get
 
